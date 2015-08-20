@@ -1,12 +1,16 @@
 module Tarp
   module Tracer
+    TEST_REGEX = %r{/(spec|test)/}
+
     def self.called_directly_from_test?
       # puts caller_locations.inspect
-      # TODO use the index of this file
-      relevant_call = caller_locations[3]
+      # TODO use the index of this file to make this dynamic
+      # TODO ensure this works outside of rspec
+      # TODO fix for older versions of ruby
+      relevant_call = caller_locations(1, 1)[0]
       # puts relevant_call.inspect
       path = relevant_call.absolute_path
-      path.match(%r{/(spec|test)/})
+      !!path.match(TEST_REGEX)
     end
 
     def self.public_method?(tp)
