@@ -21,6 +21,15 @@ module Tarp
       !!cls.name
     end
 
+    def self.method_to_s(tp)
+      if self.class_instance?(tp.defined_class)
+        "#{tp.defined_class}##{tp.method_id}"
+      else
+        # TODO parse #<Class:MyClass>
+        "#{tp.defined_class}.#{tp.method_id}"
+      end
+    end
+
     def self.on_method_call(tp)
       puts "---------------"
       if self.called_directly_from_test?
@@ -31,13 +40,12 @@ module Tarp
       # p [tp.lineno, tp.defined_class, tp.method_id, tp.event]
       if self.public_method?(tp)
         if self.class_instance?(tp.defined_class)
-          puts "public instance method #{tp.defined_class}##{tp.method_id}"
+          puts "public instance method #{self.method_to_s(tp)}"
         else
-          # TODO fix output
-          puts "public class method #{tp.defined_class}.#{tp.method_id}"
+          puts "public class method #{self.method_to_s(tp)}"
         end
       else
-        puts "non-public method #{tp.defined_class}.#{tp.method_id}"
+        puts "non-public method #{self.method_to_s(tp)}"
       end
     end
 
