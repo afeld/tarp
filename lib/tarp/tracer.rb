@@ -25,8 +25,10 @@ module Tarp
       if self.class_instance?(tp.defined_class)
         "#{tp.defined_class}##{tp.method_id}"
       else
-        # TODO parse #<Class:MyClass>
-        "#{tp.defined_class}.#{tp.method_id}"
+        # TODO make this work for modules
+        # TODO do this without needing to parse (#<Class:MyClass>)
+        cls = tp.defined_class.to_s.match(/\A#<Class:(.+)>\z/)[1]
+        "#{cls}.#{tp.method_id}"
       end
     end
 
