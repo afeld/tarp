@@ -1,5 +1,5 @@
-require "tarp/version"
+require 'tarp/version'
+require 'tarp/tracer'
 
 module Tarp
-  # Your code goes here...
 end
