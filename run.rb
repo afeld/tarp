@@ -1,2 +1,2 @@
 require_relative 'tracer'
-require_relative 'test'
+require_relative 'src'

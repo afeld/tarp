@@ -1,4 +1,9 @@
-require 'byebug'
+def called_directly_from_test?
+  # TODO use the index of this file
+  relevant_call = caller_locations[2]
+  path = relevant_call.absolute_path
+  path.match(%r{/(spec|test)/})
+end
 
 def public_method?(tp)
   tp.defined_class.public_method_defined?(tp.method_id)
@@ -10,6 +15,9 @@ end
 
 trace = TracePoint.new(:call) do |tp|
   puts "---------------"
+  if called_directly_from_test?
+    puts "called from test"
+  end
   # puts tp.class
   # puts tp.inspect
   # p [tp.lineno, tp.defined_class, tp.method_id, tp.event]
