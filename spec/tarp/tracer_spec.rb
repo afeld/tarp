@@ -8,4 +8,12 @@ describe Tarp::Tracer do
       expect(TracerCaller.called_directly_from_test?).to eq(false)
     end
   end
+
+  describe '.enable' do
+    it "executes on method calls" do
+      expect(Tarp::Tracer).to receive(:on_method_call).at_least(:once)
+      Tarp::Tracer.enable
+      global_method
+    end
+  end
 end
