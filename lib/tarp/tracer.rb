@@ -33,21 +33,21 @@ module Tarp
     end
 
     def self.on_method_call(tp)
-      puts "---------------"
-      if self.called_directly_from_test?
-        puts "called from test"
-      end
       # puts tp.class
       # puts tp.inspect
       # p [tp.lineno, tp.defined_class, tp.method_id, tp.event]
-      if self.public_method?(tp)
-        if self.class_instance?(tp.defined_class)
-          puts "public instance method #{self.method_to_s(tp)}"
+      if self.called_directly_from_test?
+        puts "---------------"
+        puts "called from test"
+        if self.public_method?(tp)
+          if self.class_instance?(tp.defined_class)
+            puts "public instance method #{self.method_to_s(tp)}"
+          else
+            puts "public class method #{self.method_to_s(tp)}"
+          end
         else
-          puts "public class method #{self.method_to_s(tp)}"
+          puts "non-public method #{self.method_to_s(tp)}"
         end
-      else
-        puts "non-public method #{self.method_to_s(tp)}"
       end
     end
 
