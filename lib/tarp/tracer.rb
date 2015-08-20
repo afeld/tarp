@@ -52,10 +52,14 @@ module Tarp
     end
 
     def self.enable
-      trace = TracePoint.new(:call) do |tp|
+      @trace ||= TracePoint.new(:call) do |tp|
         self.on_method_call(tp)
       end
-      trace.enable
+      @trace.enable
+    end
+
+    def self.disable
+      @trace.disable if @trace
     end
   end
 end
