@@ -9,6 +9,11 @@ describe Tarp::Tracer do
     end
   end
 
+  it "doesn't hit on_method_call without being enabled" do
+    expect(Tarp::Tracer).to_not receive(:on_method_call)
+    global_method
+  end
+
   describe '.enable' do
     it "executes on method calls" do
       expect(Tarp::Tracer).to receive(:on_method_call).at_least(:once)
