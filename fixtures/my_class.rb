@@ -1,7 +1,3 @@
-def global_method
-  # puts "global_method called"
-end
-
 class MyClass
   def public_instance_method
     # self.protected_instance_method
@@ -18,8 +14,6 @@ class MyClass
     # puts "protected_instance_method called"
   end
 end
-
-global_method
 
 MyClass.public_class_method
 my_instance = MyClass.new

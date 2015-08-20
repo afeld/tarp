@@ -1,8 +1,7 @@
-require 'pry-byebug'
-require_relative '../tracer'
-require_relative '../src'
+require_relative '../lib/tarp'
+require_relative '../fixtures/my_class'
 
-Tracer.enable
+Tarp::Tracer.enable
 
 MyClass.public_class_method
 my_instance = MyClass.new
