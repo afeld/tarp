@@ -1,6 +1,7 @@
 module Tarp
   module Tracer
     TEST_REGEX = %r{/(spec|test)/}
+    DIRECTLY_CALLED_METHODS = Set.new
 
     def self.called_directly_from_test?
       # puts caller_locations.inspect
@@ -49,6 +50,8 @@ module Tarp
         else
           puts "non-public method #{self.method_to_s(tp)}"
         end
+
+        DIRECTLY_CALLED_METHODS << tp
       end
     end
 

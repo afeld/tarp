@@ -20,5 +20,13 @@ describe Tarp::Tracer do
       Tarp::Tracer.enable
       global_method
     end
+
+    it "keeps track of called methods" do
+      Tarp::Tracer.enable
+      global_method
+      Tarp::Tracer.disable
+
+      expect(Tarp::Tracer::DIRECTLY_CALLED_METHODS.size).to eq(1)
+    end
   end
 end
