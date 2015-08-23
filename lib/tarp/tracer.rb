@@ -4,10 +4,11 @@ module Tarp
 
     def self.called_directly_from_test?
       # puts caller_locations.inspect
-      # TODO use the index of this file to make this dynamic
       # TODO ensure this works outside of rspec
       # TODO fix for older versions of ruby
-      relevant_call = caller_locations(1, 1)[0]
+      filtered_calls = caller_locations(0)
+      filtered_calls.reject! { |call| call.absolute_path == __FILE__ }
+      relevant_call = filtered_calls[1]
       # puts relevant_call.inspect
       path = relevant_call.absolute_path
       !!path.match(TEST_REGEX)
