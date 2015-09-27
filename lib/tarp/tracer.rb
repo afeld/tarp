@@ -65,5 +65,9 @@ module Tarp
     def self.disable
       @trace.disable if @trace
     end
+
+    def self.reset
+      DIRECTLY_CALLED_METHODS.clear
+    end
   end
 end
