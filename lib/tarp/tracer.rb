@@ -39,16 +39,16 @@ module Tarp
       # puts tp.inspect
       # p [tp.lineno, tp.defined_class, tp.method_id, tp.event]
       if self.called_directly_from_test?
-        puts "---------------"
-        puts "called from test"
+        Tarp.log("---------------")
+        Tarp.log("called from test")
         if self.public_method?(tp)
           if self.class_instance?(tp.defined_class)
-            puts "public instance method #{self.method_to_s(tp)}"
+            Tarp.log("public instance method #{self.method_to_s(tp)}")
           else
-            puts "public class method #{self.method_to_s(tp)}"
+            Tarp.log("public class method #{self.method_to_s(tp)}")
           end
         else
-          puts "non-public method #{self.method_to_s(tp)}"
+          Tarp.log("non-public method #{self.method_to_s(tp)}")
         end
 
         DIRECTLY_CALLED_METHODS << tp

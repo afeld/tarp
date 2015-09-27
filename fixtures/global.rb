@@ -1,5 +1,3 @@
 def global_method
-  puts "global_method called" if ENV['DEBUG']
+  Tarp.log("global_method called")
 end
-
-global_method
