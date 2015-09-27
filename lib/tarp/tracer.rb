@@ -2,20 +2,22 @@ require 'set'
 
 module Tarp
   module Tracer
-    TEST_REGEX = %r{/(spec|test)/}
+    TEST_DIR_REGEX = %r{/(spec|test)/}
     DIRECTLY_CALLED_METHODS = Set.new
 
     def self.called_directly_from_test?
-      # Tarp.log(caller_locations)
       # TODO ensure this works outside of rspec
       # TODO fix for older versions of ruby
       filtered_calls = caller_locations(0)
       # Tarp.log(filtered_calls)
+
+      # get the call *before* we reached this file
       filtered_calls.reject! { |call| call.absolute_path == __FILE__ }
       relevant_call = filtered_calls[1]
       # Tarp.log(relevant_call)
+
       path = relevant_call.absolute_path
-      !!path.match(TEST_REGEX)
+      !!path.match(TEST_DIR_REGEX)
     end
 
     def self.on_method_call(tp)
@@ -24,7 +26,7 @@ module Tarp
         tm = TraceMethod.new(tp.defined_class, tp.method_id)
         unless tm.class_name.start_with?('Tarp')
           Tarp.log("---------------\ncalled from test")
-          if tm.public_method?
+          if tm.public?
             Tarp.log("public method called: #{tm}")
             DIRECTLY_CALLED_METHODS << tm
           else

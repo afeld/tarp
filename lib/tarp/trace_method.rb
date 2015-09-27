@@ -2,13 +2,15 @@ module Tarp
   class TraceMethod
     attr_reader :defined_class, :method_id
 
+    alias_method :method_name, :method_id
+
     # can't pass the TracePoint instance directly, because it gives a `RuntimeError: access from outside`
     def initialize(defined_class, method_id)
       @defined_class = defined_class
       @method_id = method_id
     end
 
-    def public_method?
+    def public?
       self.defined_class.public_method_defined?(self.method_id)
     end
 
@@ -24,10 +26,6 @@ module Tarp
         # TODO do this without needing to parse (#<Class:MyClass>)
         self.defined_class.to_s.match(/\A#<Class:(.+)>\z/)[1]
       end
-    end
-
-    def method_name
-      self.method_id
     end
 
     def to_s
