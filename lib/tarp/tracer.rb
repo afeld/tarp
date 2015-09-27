@@ -1,57 +1,38 @@
+require 'set'
+
 module Tarp
   module Tracer
     TEST_REGEX = %r{/(spec|test)/}
     DIRECTLY_CALLED_METHODS = Set.new
 
     def self.called_directly_from_test?
-      # puts caller_locations.inspect
+      # Tarp.log(caller_locations)
       # TODO ensure this works outside of rspec
       # TODO fix for older versions of ruby
       filtered_calls = caller_locations(0)
+      # Tarp.log(filtered_calls)
       filtered_calls.reject! { |call| call.absolute_path == __FILE__ }
       relevant_call = filtered_calls[1]
-      # puts relevant_call.inspect
+      # Tarp.log(relevant_call)
       path = relevant_call.absolute_path
       !!path.match(TEST_REGEX)
     end
 
-    def self.public_method?(tp)
-      tp.defined_class.public_method_defined?(tp.method_id)
-    end
-
-    def self.class_instance?(cls)
-      !!cls.name
-    end
-
-    def self.method_to_s(tp)
-      if self.class_instance?(tp.defined_class)
-        "#{tp.defined_class}##{tp.method_id}"
-      else
-        # TODO make this work for modules
-        # TODO do this without needing to parse (#<Class:MyClass>)
-        cls = tp.defined_class.to_s.match(/\A#<Class:(.+)>\z/)[1]
-        "#{cls}.#{tp.method_id}"
-      end
-    end
-
     def self.on_method_call(tp)
-      # puts tp.class
-      # puts tp.inspect
-      # p [tp.lineno, tp.defined_class, tp.method_id, tp.event]
+      Tarp.log([tp.lineno, tp.defined_class, tp.method_id, tp.event])
       if self.called_directly_from_test?
-        Tarp.log("---------------")
-        Tarp.log("called from test")
-        if self.public_method?(tp)
-          if self.class_instance?(tp.defined_class)
-            Tarp.log("public instance method #{self.method_to_s(tp)}")
+        tm = TraceMethod.new(tp.defined_class, tp.method_id)
+        unless tm.class_name.start_with?('Tarp')
+          Tarp.log("---------------\ncalled from test")
+          if tm.public_method?
+            Tarp.log("public method called: #{tm}")
+            DIRECTLY_CALLED_METHODS << tm
           else
-            Tarp.log("public class method #{self.method_to_s(tp)}")
+            Tarp.log("non-public method #{tm}")
           end
-        else
-          Tarp.log("non-public method #{self.method_to_s(tp)}")
-        end
 
-        DIRECTLY_CALLED_METHODS << tp
+          DIRECTLY_CALLED_METHODS << tm
+        end
       end
     end
 
@@ -60,10 +41,12 @@ module Tarp
         self.on_method_call(tp)
       end
       @trace.enable
+      Tarp.log("Tracer enabled")
     end
 
     def self.disable
       @trace.disable if @trace
+      Tarp.log("Tracer disabled")
     end
 
     def self.reset

@@ -27,6 +27,9 @@ describe Tarp::Tracer do
       Tarp::Tracer.disable
 
       expect(Tarp::Tracer::DIRECTLY_CALLED_METHODS.size).to eq(1)
+      tm = Tarp::Tracer::DIRECTLY_CALLED_METHODS.first
+      expect(tm).to be_a(Tarp::TraceMethod)
+      expect(tm.method_name).to eq(:global_method)
     end
   end
 end
